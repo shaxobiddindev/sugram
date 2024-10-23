@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Builder
 public class Rating {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Double rating;
     @ManyToOne

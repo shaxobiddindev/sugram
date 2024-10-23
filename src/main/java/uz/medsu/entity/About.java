@@ -15,7 +15,7 @@ import uz.medsu.enums.DoctorSpecialty;
 @Builder
 public class About {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String about;
     @ManyToOne
