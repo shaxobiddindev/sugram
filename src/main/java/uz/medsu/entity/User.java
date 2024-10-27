@@ -27,6 +27,7 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     private Integer age;
+    @Enumerated(EnumType.STRING)
     private Gender gender;
     private String password;
     @Column(unique = true, nullable = false)
