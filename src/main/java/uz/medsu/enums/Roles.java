@@ -1,7 +1,8 @@
 package uz.medsu.enums;
 
-public enum Role {
+public enum Roles {
     ADMIN,
     USER,
-    DOCTOR
+    DOCTOR,
+    MANAGER
 }

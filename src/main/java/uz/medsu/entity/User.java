@@ -9,8 +9,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import uz.medsu.enums.Gender;
-import uz.medsu.enums.Role;
+import uz.medsu.entity.Role;
+import uz.medsu.enums.Roles;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,14 +36,23 @@ public class User implements UserDetails {
     private String email;
     @Column(unique = true)
     private String phone;
-    @Enumerated(EnumType.STRING)
+    private String imageUrl;
+    @ManyToOne(fetch = FetchType.EAGER)
     private Role role;
+    @Enumerated(EnumType.STRING)
+    private Roles profession;
     private Boolean enabled;
     private Boolean isNonLocked;
+    private String locale;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toString()));
+        for (Authority authority : role.getAuthorities()) {
+            authorities.add(new SimpleGrantedAuthority(authority.getAuthorities().toString()));
+        }
+        return authorities;
     }
 
     @Override

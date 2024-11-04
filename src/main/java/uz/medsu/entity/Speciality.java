@@ -5,18 +5,25 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
+import uz.medsu.enums.DoctorSpecialty;
+
+import java.util.List;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Rating {
+public class Speciality {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double rating;
-    private Long doctorId;
+    private String about;
     private Long userId;
+    @Enumerated(EnumType.STRING)
+    private DoctorSpecialty doctorSpecialty;
+    @ManyToMany
+    private List<Day> workDays;
+    @ManyToMany
+    private List<Time> workTimes;
 }

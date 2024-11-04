@@ -5,23 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import uz.medsu.enums.DoctorSpecialty;
+import uz.medsu.enums.Authorities;
 
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class About {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Authority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String about;
-    @ManyToOne
-    private User user;
     @Enumerated(EnumType.STRING)
-    private DoctorSpecialty doctorSpecialty;
-    private String location;
-
+    private Authorities authorities;
 }

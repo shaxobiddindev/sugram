@@ -42,10 +42,8 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .requestMatchers(Util.openUrl)
                 .permitAll()
-                .requestMatchers(HttpMethod.POST)
+                .requestMatchers("/admin/**")
                 .hasRole("ADMIN")
-                .requestMatchers("/doctors/**")
-                .hasAnyRole( "USER")
                 .anyRequest()
                 .authenticated();
         return http.build();
@@ -59,3 +57,4 @@ public class SecurityConfiguration {
         return userDetailsService;
     }
 }
+

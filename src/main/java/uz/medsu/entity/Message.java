@@ -29,4 +29,5 @@ public class Message {
     @Enumerated(EnumType.STRING)
     private MessageType type;
     private Boolean isActive;
+    private Boolean isRead;
 }

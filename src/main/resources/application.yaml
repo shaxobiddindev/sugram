@@ -1,4 +1,6 @@
 spring:
+  banner:
+    location: banner.txt
   application:
     name: medsu
   datasource:
@@ -10,6 +12,9 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  sql:
+    init:
+      mode: never
 my_token:
   key: shaxobiddindevjknsjnvfwefbnwujnosdwssedfwef
   expire_time: 86400000

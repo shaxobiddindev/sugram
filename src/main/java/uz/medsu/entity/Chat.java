@@ -22,6 +22,11 @@ public class Chat {
     @Enumerated(EnumType.STRING)
     private ChatType chatType;
     @ManyToMany
+    @JoinTable(
+            name = "chat_users", // specify join table name
+            joinColumns = @JoinColumn(name = "chat_id"), // specify Chat's column in join table
+            inverseJoinColumns = @JoinColumn(name = "users_id") // specify User's column in join table
+    )
     private List<User> users;
     private Boolean isActive;
 }
