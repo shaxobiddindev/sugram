@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uz.medsu.enums.DoctorSpecialty;
+import uz.medsu.enums.DoctorSpeciality;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class Speciality {
     private String about;
     private Long userId;
     @Enumerated(EnumType.STRING)
-    private DoctorSpecialty doctorSpecialty;
+    private DoctorSpeciality doctorSpecialty;
     @ManyToMany
     private List<Day> workDays;
     @ManyToMany

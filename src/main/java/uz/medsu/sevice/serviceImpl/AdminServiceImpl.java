@@ -2,27 +2,27 @@ package uz.medsu.sevice.serviceImpl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Repository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import uz.medsu.entity.Authority;
-import uz.medsu.entity.Role;
-import uz.medsu.entity.User;
+import uz.medsu.entity.*;
+import uz.medsu.enums.Days;
+import uz.medsu.enums.DoctorSpeciality;
 import uz.medsu.enums.Roles;
 import uz.medsu.payload.ReturnUserDTO;
 import uz.medsu.payload.SetDoctorDTO;
 import uz.medsu.payload.UserRoleEditDTO;
 import uz.medsu.repository.AuthorityRepository;
+import uz.medsu.repository.DaysRepository;
 import uz.medsu.repository.RoleRepository;
 import uz.medsu.repository.UserRepository;
 import uz.medsu.sevice.AdminService;
-import uz.medsu.sevice.I18nService;
 import uz.medsu.utils.I18nUtil;
 import uz.medsu.utils.ResponseMessage;
-import uz.medsu.utils.Util;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +30,7 @@ public class AdminServiceImpl implements AdminService {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
+    private final DaysRepository daysRepository;
 
     @Override
     public ResponseMessage roles() {
@@ -40,11 +41,22 @@ public class AdminServiceImpl implements AdminService {
     public ResponseMessage setDoctor(SetDoctorDTO doctorDTO) {
         User user = userRepository.findById(doctorDTO.userId()).orElseThrow(() -> new RuntimeException(I18nUtil.getMessage("userNotFound")));
         if (checkAuthorityId(doctorDTO.authoritiesId())) throw new RuntimeException(I18nUtil.getMessage("authorityIdIncorrect"));
+
         user.getRole().setName(Roles.DOCTOR);
         user.setProfession(Roles.DOCTOR);
+        Speciality speciality = Speciality.builder()
+                .about(doctorDTO.about())
+                .doctorSpecialty(DoctorSpeciality.valueOf(doctorDTO.doctorSpeciality().toUpperCase()))
+
+                .build();
         user.getRole().setAuthorities(authorityRepository.findAll().stream().filter(a -> doctorDTO.authoritiesId().contains(a.getId())).toList());
         userRepository.save(user);
         return ResponseMessage.builder().success(true).message(I18nUtil.getMessage("userChangedSuccess")).data(new ReturnUserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getAge(), user.getGender().name(), user.getRole())).build();
+    }
+
+    @Override
+    public ResponseMessage setRole(UserRoleEditDTO roleEditDTO) {
+        return null;
     }
 
     @Override
@@ -85,5 +97,62 @@ public class AdminServiceImpl implements AdminService {
             if (!authorityRepository.existsById(id)) return true;
         }
         return false;
+    }
+
+    private List<Day> formatDays(String start, String end) {
+        Day startDay;
+        Day endDay;
+        try{
+            startDay = daysRepository.findByDay(Days.valueOf(start.toUpperCase())).orElseThrow(RuntimeException::new);
+            endDay = daysRepository.findByDay(Days.valueOf(end.toUpperCase())).orElseThrow(RuntimeException::new);
+        }
+        catch (Exception e){
+            throw new RuntimeException(I18nUtil.getMessage("weekdaysError"));
+        }
+        List<Day> all = daysRepository.findAll();
+        List<Day> days = new ArrayList<>();
+
+        if (startDay.getId() > endDay.getId()) {
+            for (long i = startDay.getId(); i <= 7; i++) {
+                days.add(all.get((int) (i-1)));
+            }
+            for (long i = 1; i <= endDay.getId(); i++) {
+                days.add(all.get((int) (i-1)));
+            }
+        }else {
+            for (long i = startDay.getId(); i <= endDay.getId(); i++) {
+                days.add(all.get((int) (i-1)));
+            }
+        }
+
+        return days;
+    }
+
+    private List<Time> formatTimes(String start, String breakTime, String end ) {
+        List<Time> startTimes = new ArrayList<>();
+
+        try {
+            int first = Integer.parseInt(start.split(":")[0]);
+            int br = Integer.parseInt(breakTime.split(":")[0]);
+            int last = Integer.parseInt(end.split(":")[0]);
+            LocalTime breakLocal = formatTime(breakTime);
+            for (int i = first; i < last; i++) {
+                if (i == br)continue;
+                Time time = new Time();
+                LocalTime startTime = formatTime(start);
+                LocalTime endTime = formatTime(end);
+                time.setTime(startTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+                time.setTime(endTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+            }
+
+        }catch (Exception e){
+            throw new RuntimeException(I18nUtil.getMessage("timeFormatError"));
+        }
+
+        return startTimes;
+    }
+
+    private LocalTime formatTime(String time) {
+        return LocalTime.parse(time);
     }
 }

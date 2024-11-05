@@ -1,6 +1,6 @@
 package uz.medsu.enums;
 
-public enum DoctorSpecialty {
+public enum DoctorSpeciality {
     CARDIOLOGIST,  // Yurak kasalliklari bo‘yicha mutaxassis
     DENTIST,       // Stomatolog
     PEDIATRICIAN,  // Bolalar shifokori
